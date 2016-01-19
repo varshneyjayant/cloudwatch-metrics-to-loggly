@@ -111,7 +111,7 @@ exports.handler = function (event, context) {
                 pName = result.Metrics[i].Dimensions[j].Name
                 pValue = result.Metrics[i].Dimensions[j].Value
               }
-              var promise = fatchMetricStatisticsFromMetrics(pNamespace, pMetricName, pName, pValue);
+              var promise = fetchMetricStatisticsFromMetrics(pNamespace, pMetricName, pName, pValue);
               promisesResult.push(promise)
             }
           }
@@ -134,7 +134,7 @@ exports.handler = function (event, context) {
   }
 
   //Gets statistics for the specified metric.
-  function fatchMetricStatisticsFromMetrics(namespace, metricName, dName, dValue) {
+  function fetchMetricStatisticsFromMetrics(namespace, metricName, dName, dValue) {
     var MetricStatisticsPromises = [];
     return Q.Promise(function (resolve, reject) {
 
