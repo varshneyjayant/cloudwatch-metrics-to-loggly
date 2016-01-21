@@ -36,14 +36,14 @@ exports.handler = function (event, context) {
   var parsedStatics = [];
 
   var nowDate = new Date();
-  var dt = nowDate.getTime();
+  var date = nowDate.getTime();
 
   //time upto which we want to fetch Metrics Statics
   //we keep it one hour
   var logEndTime = nowDate.toISOString();
 
   //time from which we want to fetch Metrics Statics
-  var logStartTime = new Date(dt - (60 * 60 * 1000)).toISOString();
+  var logStartTime = new Date(date - (05 * 60 * 1000)).toISOString();
 
   //setup keys in the aws object
   AWS.config.update({
@@ -148,7 +148,7 @@ exports.handler = function (event, context) {
         EndTime: logEndTime, //required
         MetricName: metricName, //required
         Namespace: namespace, //required
-        Period: 240, //required
+        Period: 60, //required
         StartTime: logStartTime, //required
         Statistics: [ //required
              'Average', 'Minimum', 'Maximum', 'SampleCount', 'Sum'
@@ -167,7 +167,7 @@ exports.handler = function (event, context) {
           if (err) console.log(err, err.stack); // an error occurred
           else {
             for (var a in data.Datapoints) {
-              var promise = parseStatics(data.Datapoints[a], data.ResponseMetadata, data.Label)
+              var promise = parseStatics(data.Datapoints[a], data.ResponseMetadata, data.Label, dName, dValue, namespace)
               Promises.push(promise);
             }
             Q.allSettled(Promises).then(function () {
@@ -186,20 +186,22 @@ exports.handler = function (event, context) {
 
   //converts the Statics to a valid JSON object with the sufficient infomation required
 
-  function parseStatics(MetricsStatics, ResponseMetadata, Label) {
+  function parseStatics(metricsStatics, responseMetadata, metricName, dimensionName, dimensionValue, namespace) {
     return Q.promise(function (resolve, reject) {
 
       var staticdata = {
-        "timestamp": MetricsStatics.Timestamp.toISOString(),
-        "SampleCount": MetricsStatics.SampleCount,
-        "Average": MetricsStatics.Average,
-        "Sum": MetricsStatics.Sum,
-        "Minimum": MetricsStatics.Minimum,
-        "Maximum": MetricsStatics.Maximum,
-        "Unit": MetricsStatics.Unit,
-        "ResponseMetadata": ResponseMetadata,
-        "Label": Label
-      }
+        "timestamp": metricsStatics.Timestamp.toISOString(),
+        "sampleCount": metricsStatics.SampleCount,
+        "average": metricsStatics.Average,
+        "sum": metricsStatics.Sum,
+        "minimum": metricsStatics.Minimum,
+        "maximum": metricsStatics.Maximum,
+        "unit": metricsStatics.Unit,
+        "metricName": metricName,
+        "namespace": namespace
+      };
+      staticdata[firstToLowerCase(dimensionName)] = dimensionValue;
+
       postStaticsToLoggly(staticdata).then(function () {
         resolve();
       }, function () {
@@ -284,5 +286,10 @@ exports.handler = function (event, context) {
         reject();
       }
     });
+  }
+
+  //function to convert the first letter of the string to lowercase
+  function firstToLowerCase(str) {
+    return str.substr(0, 1).toLowerCase() + str.substr(1);
   }
 }
