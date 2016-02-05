@@ -1,0 +1,29 @@
+{
+  "name": "cloudwatch-metrics-to-loggly",
+  "version": "1.0.0",
+  "description": "A NodeJS library to send Cloudwatch Metrics to Loggly",
+  "main": "cloudwatchMetrics2Loggly.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/psquickitjayant/cloudwatch-metrics-to-loggly.git"
+  },
+  "keywords": [
+    "Loggly",
+    "Cloudwatch",
+    "Cloudwatch Metrics"
+  ],
+  "author": "psquickitjayant",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/psquickitjayant/cloudwatch-metrics-to-loggly/issues"
+  },
+  "homepage": "https://github.com/psquickitjayant/cloudwatch-metrics-to-loggly",
+  "dependencies": {
+    "aws-sdk": "^2.2.25",
+    "q": "^1.4.1",
+    "request": "^2.67.0"
+  }
+}
