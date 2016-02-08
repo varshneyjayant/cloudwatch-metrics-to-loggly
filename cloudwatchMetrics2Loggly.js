@@ -3,15 +3,6 @@ var AWS = require('aws-sdk')
   , Q = require('q')
   , request = require('request');
 
-//AWS keys configuration
-//user need to edit while uploading code via blueprint
-var awsConfiguration = {
-  accessKeyId: 'xxxx',
-  secretAccessKey: 'xxxxx',
-  region: 'xxxx',
-
-};
-
 //loggly url, token and tag configuration
 //user need to edit while uploading code via blueprint
 var logglyConfiguration = {
@@ -19,12 +10,6 @@ var logglyConfiguration = {
   customerToken: 'your-customer-token',
   tags: 'CloudwatchMetrics'
 };
-
-AWS.config.update({
-  accessKeyId: awsConfiguration.accessKeyId,
-  secretAccessKey: awsConfiguration.secretAccessKey,
-  region: awsConfiguration.region
-});
 
 var cloudwatch = new AWS.CloudWatch({
   apiVersion: '2010-08-01'
@@ -44,13 +29,6 @@ exports.handler = function (event, context) {
 
   //time from which we want to fetch Metrics Statics
   var logStartTime = new Date(date - (05 * 60 * 1000)).toISOString();
-
-  //setup keys in the aws object
-  AWS.config.update({
-    accessKeyId: awsConfiguration.accessKeyId,
-    secretAccessKey: awsConfiguration.secretAccessKey,
-    region: awsConfiguration.region
-  });
 
   //initiate the script here
   getMetricsListFromAWSCloudwatch().then(function () {
