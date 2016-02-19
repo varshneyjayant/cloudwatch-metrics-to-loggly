@@ -7,9 +7,15 @@ var AWS = require('aws-sdk')
 //user need to edit while uploading code via blueprint
 var logglyConfiguration = {
   url: 'http://logs-01.loggly.com/bulk',
-  customerToken: 'your-customer-token',
   tags: 'CloudwatchMetrics'
 };
+
+var encryptedLogglyToken = "your KMS encypted key";
+var encryptedLogglyTokenBuffer = new Buffer(encryptedLogglyToken, "base64");
+
+var kms = new AWS.KMS({
+  apiVersion: '2014-11-01'
+});
 
 var cloudwatch = new AWS.CloudWatch({
   apiVersion: '2010-08-01'
@@ -31,16 +37,45 @@ exports.handler = function (event, context) {
   var logStartTime = new Date(date - (05 * 60 * 1000)).toISOString();
 
   //initiate the script here
-  getMetricsListFromAWSCloudwatch().then(function () {
-    sendRemainingStatics().then(function () {
-      console.log('all statics are sent to Loggly');
-      context.done();
+  decryptLogglyToken().then(function () {
+    getMetricsListFromAWSCloudwatch().then(function () {
+      sendRemainingStatics().then(function () {
+        console.log('all statics are sent to Loggly');
+        context.done();
+      }, function () {
+        console.log("Error");
+        context.done();
+      });
     }, function () {
       console.log("Error");
       context.done();
     });
-  }, function () { });
+  }, function () {
+    console.log("Error");
+    context.done();
+  });
+  
+  //decrypts your Loggly Token from your KMS key
+  function decryptLogglyToken() {
 
+    return Q.Promise(function (resolve, reject) {
+      var params = {
+        CiphertextBlob: encryptedLogglyTokenBuffer
+      };
+
+      kms.decrypt(params, function (err, data) {
+        if (err) {
+          console.log(err, err.stack); // an error occurred
+          reject();
+        }
+        else {
+          // successful response
+          logglyConfiguration.customerToken = data.Plaintext.toString('ascii');
+          resolve();
+        }
+      });
+    });
+  }
 
   //retreives all list of valid metrics from cloudwatch
   function getMetricsListFromAWSCloudwatch() {
