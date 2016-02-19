@@ -40,18 +40,14 @@ exports.handler = function (event, context) {
   decryptLogglyToken().then(function () {
     getMetricsListFromAWSCloudwatch().then(function () {
       sendRemainingStatics().then(function () {
-        console.log('all statics are sent to Loggly');
-        context.done();
+        context.done('all statics are sent to Loggly');
       }, function () {
-        console.log("Error");
         context.done();
       });
     }, function () {
-      console.log("Error");
-      context.done();
+        context.done();
     });
   }, function () {
-    console.log("Error");
     context.done();
   });
   
