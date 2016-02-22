@@ -11,14 +11,6 @@ Sends AWS Cloudwatch metrics to Loggly
 git clone https://github.com/psquickitjayant/cloudwatch-metrics-to-loggly.git
 cd cloudwatch-metrics-to-loggly
 ```
-
-##Open the cloudwatchMetrics2Loggly.js and provide the following information in it
-
-* Your Loggly customer token
-```javascript
-//your encrypted Loggly Token
-var encryptedLogglyToken = "your KMS encypted key";
-```
 * Install required npm packages.
 ```
 npm install
@@ -41,7 +33,8 @@ using the command line tools.
 1. Create Role
   1. Sign in to your AWS account and open IAM console https://console.aws.amazon.com/iam/
   2. In your IAM console create a new Role say, 'cloudwatch-full-access'
-  3. Apply policy 'CloudWatchFullAccess' and save.
+  3. Select Role Type as 'AWS Lambda'
+  4. Apply policy 'CloudWatchFullAccess' and save.
 2. Create KMS Key
   1. Create a KMS key - http://docs.aws.amazon.com/kms/latest/developerguide/create-keys.html
   2. Encrypt the Loggly Customer Token using the AWS CLI - **aws kms encrypt --key-id alias/&lt;your KMS key arn&gt; --plaintext "&lt;your loggly customer token&gt;"**
@@ -56,11 +49,14 @@ using the command line tools.
     * Set Timeout to 2 minutes
   3. Go to your Lamda function and select the "Event sources" tab
     * Click on **Add Event Source**
-    * Event Source Type : *Scheduled Event*
+    * Event Source Type : *Cloudwatch Events - Schedule*
     * Name : Provide any customized name. e.g. cloudwatchMetrics2Loggly Event Source
     * Description: Invokes Lambda function in every 5 minutes
     * Schedule expression : *rate(5 minutes)*
     * Enable Event Source : *Enable Now*
  Now click on submit and wait for the events to occur in Loggly
 
+**NOTE**: Always use latest version of **AWSCLI**. Some features like KMS may not work on older versions of AWSCLI. To upgrade, use the command given below
+
+`pip install --upgrade awscli`
 
