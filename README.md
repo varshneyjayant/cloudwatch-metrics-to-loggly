@@ -18,7 +18,7 @@ npm install
 
 * zip up your code
 ```bash
-zip -r cloudwatchMetrics2Loggly.zip cloudwatchMetrics2Loggly.js node_modules
+zip -r cloudwatchMetrics2Loggly.zip index.js node_modules
 ```
 
 The resulting zip (cloudwatchMetrics2Loggly.zip) is what you will upload to AWS.
@@ -44,7 +44,7 @@ using the command line tools.
   2. Click "Create a Lambda function" button. *(Choose "Upload a .ZIP file")*
     * **Name:** *cloudwatchMetrics2Loggly*
     * Upload lambda function (zip file you made above.)
-    * **Handler*:** *cloudwatchMetrics2Loggly.handler*
+    * **Handler*:** *index.handler*
     * Set Role : *cloudwatch-full-access*
     * Set Timeout to 2 minutes
   3. Go to your Lamda function and select the "Event sources" tab
