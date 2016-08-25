@@ -2,7 +2,7 @@
   "name": "cloudwatch-metrics-to-loggly",
   "version": "1.0.0",
   "description": "A NodeJS library to send Cloudwatch Metrics to Loggly",
-  "main": "cloudwatchMetrics2Loggly.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
